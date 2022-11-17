@@ -3,14 +3,14 @@
 #'Está função serve para listar todas as estações INMET Brasil
 #'
 #'@example
-#'seasons()
+#'seasons_INMT()
 #'
 #'@export
 #'@return Returns a data.frame with the AWS data requested
 #'@author Santos Henrique Brant Dias
 
 
-seasons <- function() {
+seasons_INMT <- function() {
 
   if(!require("pacman")) install.packages("pacman");pacman::p_load(
     httr,jsonlite,dplyr)

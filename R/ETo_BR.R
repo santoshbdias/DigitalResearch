@@ -27,8 +27,8 @@ ETo_BR <- function(date) {
   df <- mutate_at(df, vars(PRE_INS,VL_LATITUDE,UMD_MAX,TEM_MAX,RAD_GLO,TEM_MIN,
                            VL_LONGITUDE,UMD_MIN,VEN_VEL,TEM_INS,CHUVA), as.numeric)
 
-  df<-df %>%
-    group_by(DC_NOME, DT_MEDICAO,CD_ESTACAO,VL_LATITUDE)%>%
+  df2 <- df %>%
+    group_by(DC_NOME, DT_MEDICAO,CD_ESTACAO,VL_LATITUDE) %>%
     summarise(tmin = min(TEM_MIN), tmax = max(TEM_MAX),tmean = mean(TEM_INS),
               Rs = sum(RAD_GLO)/1000,u2 = mean(VEN_VEL),Patm = mean(PRE_INS),
               RH_max = max(UMD_MAX),RH_min = min(UMD_MIN), Chuva = sum(CHUVA)) %>%
@@ -49,11 +49,11 @@ ETo_BR <- function(date) {
   df<-left_join(df,estaut,by="Cod_Estacao")
   rm(estaut)
 
+  df <- df[,-1]
+
   df <- df %>% dplyr::select(c('Cod_Estacao','Cidade','Estado','Lat','Long','tmin','tmax','tmean',
                                'Rs','u2','Patm','RH_max','RH_min','Altitude','Data','Situacao','Chuva')) %>%
     na.omit()
-
-  df <- df[,-1]
 
   df<-as.data.frame(df)
   df <- mutate_at(df, vars(Altitude,Long), as.numeric)

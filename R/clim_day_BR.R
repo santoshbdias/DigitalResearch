@@ -1,19 +1,17 @@
-#'Função gera os dados diários das estações automaticas do Brasil
+#'Função gera os dados climáticos diários das estações automaticas do Brasil
 #'
 #'Está função serve para baixar os dados climáticos de todas estações INMET Brasil
 #'
 #'@param date uma data
 #'
 #'@example
-#'ETo_BR()
+#'clim_day_BR()
 #'
 #'@export
 #'@return Returns a data.frame with the AWS data requested
 #'@author Santos Henrique Brant Dias
 
-date<-Sys.Date()-1
-
-ETo_BR <- function(date) {
+clim_day_BR <- function(date) {
 
   date <- as.Date(date)
 
