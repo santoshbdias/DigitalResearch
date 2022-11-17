@@ -17,7 +17,7 @@ date
 Returns a data.frame with the AWS data requested
 }
 \description{
-Está função serve para calcular a ETo FAO 56 no Brasil
+Está função serve para baixar os dados climáticos de todas estações INMET Brasil
 }
 \author{
 Santos Henrique Brant Dias
