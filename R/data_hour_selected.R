@@ -22,7 +22,7 @@ data_hour_selected <- function(date_ini,date_fin,stations) {
 if(!require("pacman")) install.packages("pacman");pacman::p_load(
   httr,jsonlite,dplyr)
 
-  estaut<-station_INMT()
+  estaut<-station_INMET()
   estaut<-estaut[stations,]
 
 for (i in 1:nrow(estaut)) {
