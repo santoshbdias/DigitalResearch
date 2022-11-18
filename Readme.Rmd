@@ -1,7 +1,7 @@
-# DigitalResearch
+#DigitalResearch
 DigitalResearch é um pacote de ferramentas R para uso de pesquisadores e responsáveis por experimentos vinculados a área de Agricultura Digital. Atualmente o pacote integra apenas dados climáticos do INMET, mas será incrementado outras bases a medida que as demandas forem surgindo.
 
-# Instalação
+#Instalação
 Para instalar a última versão do pacote DigitalResearch siga estes passos:
 
 1 - Instalar os pacotes necesários para iniciar as instalações:
@@ -14,7 +14,7 @@ install.packages(devtools)
 devtools::install_github("santoshbdias/DigitalResearch")
 ```
 
-# Exemplo
+#Exemplo
 
 ```
 #Limpar todas as variáveis e memória ocupada pelo R
