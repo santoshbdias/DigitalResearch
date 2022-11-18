@@ -1,12 +1,21 @@
 Package: DigitalResearch
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Tools for research work with Digital Agriculture
+Version: 0.0.1
+Author: c(person(given = "Santos H.",
+                    family = "B Dias",
+                    role = c("aut","cre"),
+                    email = "santoshbdias@gmail.com",
+                    comment = c(ORCID = "0000-0001-7800-5416")),
+            person(given = "Rogerio",
+                    family = "Silva Ferreira",
+                    role = ("aut"),
+                    comment = c(ORCID = "0000-0000-0000-0000")))
+Maintainer: The package maintainer <santoshbdias@gmail.com>
+Description: Package prepared by Santos Henrique Brant Dias, together with the partnership between UniCampo and Corteva.
+    Pack of tools for scientific research work in Digital Agriculture.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Imports: httr, jsonlite, pacman, dplyr
 RoxygenNote: 7.2.1
