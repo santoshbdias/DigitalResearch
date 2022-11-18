@@ -1,11 +1,11 @@
-#'Função para calcular ETo FAO 56 das estações automaticas do Brasil
+#'Função para calcular ETo FAO 56 das estações automaticas do Brasil em uma determinada data
 #'
-#'Está função serve para calcular a ETo FAO 56 no Brasil
+#'Está função serve para calcular a ETo FAO 56 no Brasil em uma determinada data
 #'
 #'@param date uma data
 #'
 #'@example
-#'ETo_BR()
+#'ETo_BR(Sys.Date()-1)
 #'
 #'@export
 #'@return Returns a data.frame with the AWS data requested
@@ -27,7 +27,9 @@ ETo_BR <- function(date) {
   df <- mutate_at(df, vars(PRE_INS,VL_LATITUDE,UMD_MAX,TEM_MAX,RAD_GLO,TEM_MIN,
                            VL_LONGITUDE,UMD_MIN,VEN_VEL,TEM_INS,CHUVA), as.numeric)
 
-  df2 <- df %>%
+  options(dplyr.summarise.inform = FALSE)
+
+  df <- df %>%
     group_by(DC_NOME, DT_MEDICAO,CD_ESTACAO,VL_LATITUDE) %>%
     summarise(tmin = min(TEM_MIN), tmax = max(TEM_MAX),tmean = mean(TEM_INS),
               Rs = sum(RAD_GLO)/1000,u2 = mean(VEN_VEL),Patm = mean(PRE_INS),

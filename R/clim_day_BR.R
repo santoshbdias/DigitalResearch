@@ -5,7 +5,7 @@
 #'@param date uma data
 #'
 #'@example
-#'clim_day_BR()
+#'clim_day_BR(Sys.Date()-1)
 #'
 #'@export
 #'@return Returns a data.frame with the AWS data requested
@@ -27,12 +27,13 @@ clim_day_BR <- function(date) {
   df <- mutate_at(df, vars(PRE_INS,VL_LATITUDE,UMD_MAX,TEM_MAX,RAD_GLO,TEM_MIN,
                            VL_LONGITUDE,UMD_MIN,VEN_VEL,TEM_INS,CHUVA), as.numeric)
 
-  df<-df %>%
-    group_by(DC_NOME, DT_MEDICAO,CD_ESTACAO,VL_LATITUDE)%>%
+  options(dplyr.summarise.inform = FALSE)
+
+  df <- df %>%
+    group_by(DC_NOME, DT_MEDICAO,CD_ESTACAO,VL_LATITUDE) %>%
     summarise(tmin = min(TEM_MIN), tmax = max(TEM_MAX),tmean = mean(TEM_INS),
               Rs = sum(RAD_GLO)/1000,u2 = mean(VEN_VEL),Patm = mean(PRE_INS),
-              RH_max = max(UMD_MAX),RH_min = min(UMD_MIN), Chuva = sum(CHUVA)) %>%
-    na.omit()
+              RH_max = max(UMD_MAX),RH_min = min(UMD_MIN), Chuva = sum(CHUVA))
 
   names(df)<-c("Cid","Data","Cod_Estacao","Lat","tmin","tmax","tmean","Rs","u2",
                "Patm","RH_max","RH_min",'Chuva')
@@ -41,19 +42,18 @@ clim_day_BR <- function(date) {
   estaut <- fromJSON(rawToChar(estaut$content), flatten = TRUE)
 
   estaut <- estaut %>% dplyr::select(c("DC_NOME","CD_SITUACAO","TP_ESTACAO","VL_LATITUDE",
-                                       "VL_LONGITUDE","VL_ALTITUDE","SG_ESTADO","CD_ESTACAO"))%>%
-    na.omit()
+                                       "VL_LONGITUDE","VL_ALTITUDE","SG_ESTADO","CD_ESTACAO"))
+
   names(estaut)<-c('Cidade','Situacao','Tipo_Estacao','Latitude','Long','Altitude','Estado','Cod_Estacao')
 
 
   df<-left_join(df,estaut,by="Cod_Estacao")
   rm(estaut)
 
-  df <- df %>% dplyr::select(c('Cod_Estacao','Cidade','Estado','Lat','Long','tmin','tmax','tmean',
-                               'Rs','u2','Patm','RH_max','RH_min','Altitude','Data','Situacao','Chuva')) %>%
-    na.omit()
-
   df <- df[,-1]
+
+  df <- df %>% dplyr::select(c('Cod_Estacao','Cidade','Estado','Lat','Long','tmin','tmax','tmean',
+                               'Rs','u2','Patm','RH_max','RH_min','Altitude','Data','Situacao','Chuva'))
 
   df<-as.data.frame(df)
   df <- mutate_at(df, vars(Altitude,Long), as.numeric)
@@ -100,7 +100,7 @@ clim_day_BR <- function(date) {
                                  Rs=df$Rs, u2=df$u2,Patm=df$Patm, RH_max=df$RH_max,
                                  RH_min=df$RH_min, z=df$Altitude, date=df$Data)) %>%
     dplyr::select(c('Cod_Estacao','Cidade','Estado','Lat','Long','Altitude','Data','Situacao',
-                    'ETo','Chuva'))
+                    'ETo','Chuva','tmin','tmax','tmean','Rs','u2','Patm','RH_max','RH_min'))
 
   rm(df,daily_eto_FAO56)
   return(det)

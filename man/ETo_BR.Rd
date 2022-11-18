@@ -2,7 +2,7 @@
 % Please edit documentation in R/ETo_BR.R
 \name{ETo_BR}
 \alias{ETo_BR}
-\title{Função para calcular ETo FAO 56 das estações automaticas do Brasil}
+\title{Função para calcular ETo FAO 56 das estações automaticas do Brasil em uma determinada data}
 \usage{
 ETo_BR(date)
 }
@@ -13,7 +13,7 @@ ETo_BR(date)
 Returns a data.frame with the AWS data requested
 }
 \description{
-Está função serve para calcular a ETo FAO 56 no Brasil
+Está função serve para calcular a ETo FAO 56 no Brasil em uma determinada data
 }
 \author{
 Santos Henrique Brant Dias
