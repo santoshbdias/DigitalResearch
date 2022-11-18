@@ -4,12 +4,16 @@ DigitalResearch é um pacote de ferramentas R para uso de pesquisadores e respon
 # Instalação
 Para instalar a última versão do pacote DigitalResearch siga estes passos:
 
-1 - Instalar os pacotes necesários para iniciar as instalações:
+1 - Instalar o software R no seu computador: https://cran.r-project.org/bin/windows/base/
+
+2 - Instalar o software Rstudio no seu computador: https://posit.co/download/rstudio-desktop/
+
+3 - Instalar os pacotes necesários para iniciar as instalações:
 ```
 install.packages(devtools)
 ```
 
-2 - Instalar via github pacote DigitalResearch
+4 - Instalar via github pacote DigitalResearch
 ```
 devtools::install_github("santoshbdias/DigitalResearch")
 ```
