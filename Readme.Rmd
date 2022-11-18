@@ -1,5 +1,4 @@
 # DigitalResearch
-
 DigitalResearch é um pacote de ferramentas R para uso de pesquisadores e responsáveis por experimentos vinculados a área de Agricultura Digital. Atualmente o pacote integra apenas dados climáticos do INMET, mas será incrementado outras bases a medida que as demandas forem surgindo.
 
 # Instalação
@@ -38,6 +37,5 @@ df4 <- station_INMET()
 
 #Comando para download de dados horários de um intervalo de datas e determinadas estações meteorológicas.
 df5 <- data_hour_selected('2022-06-01','2022-11-16',c(50,89,256,368,502))
-
 
 ```
