@@ -7,36 +7,37 @@
 #'@param savall link da pasta para salvar todos os resultados
 #'
 #'@example
-#'analises_sentinel('C:/Users/OneDrive/KMLs_areas','C:/Users/OneDrive/Sentinel_Images/22KDF_22KDG_22KEF',
-#''C:/Users/OneDrive/FET/Projects/R')
+#'analises_sentinel(kml, past, savall)
 #'
 #'@export
 #'@return Returns a images indices and data excel
 #'@author Santos Henrique Brant Dias
 
-analises_sentinel <- function(kml,past, savall) {
+analises_sentinel <- function(kml, past, savall) {
 
   if(!require("pacman")) install.packages("pacman");pacman::p_load(
-  raster, rgdal, rgeos,stringr, xlsx, sp, terra)
+  raster, rgdal, stringr, xlsx, sp, terra)
 
-  kmls <-  dir(kml, full.names = T, include.dirs = T)
+  kmls <-  kml
 
   #Mudar a pasta que as imagens desse kml está
   pasts <-  dir(past, full.names = T, include.dirs = T)
 
   img1 <- dir(pasts[1],pattern = ".jp2",full.names = T, recursive =T, include.dirs = T)
 
+  #j=1
   for (j in 1:length(kmls)) {
-    nkml <- str_sub(unlist(strsplit(kmls[z],'/'))[length(unlist(strsplit(kmls[z],'/')))], 1,-5)
+    nkml <- str_sub(unlist(strsplit(kmls[j],'/'))[length(unlist(strsplit(kmls[j],'/')))], 1,-5)
 
     print(nkml)
 
-    area_shape <- readOGR(kmls[j])
+    area_shape <- rgdal::readOGR(kmls[j])
 
     area_shape <- sp::spTransform(area_shape, proj4string(raster(img1[1])))
 
 
-  for (i in 1:length(pasts)) {
+  #i=1
+    for (i in 1:length(pasts)) {
     dat<-stringr::str_sub(pasts[i],start=-10)
     print(paste0(i,' / ',dat))
 
@@ -48,7 +49,7 @@ analises_sentinel <- function(kml,past, savall) {
     B11<-raster(dir(pasts[i], pattern = '_B11.jp2',full.names = T, recursive =T, include.dirs = T))
 
 
-    cort <- gBuffer(area_shape, width = 200)
+    cort <- raster::buffer(area_shape, width = 200)
 
     if(!is.null(intersect(extent(cort),B02))){
       print('kml dentro da imagem')}else{
@@ -63,9 +64,11 @@ analises_sentinel <- function(kml,past, savall) {
     B06 <- mask(crop(B06,extent(cort)),cort)
     B11 <- mask(crop(B11,extent(cort)),cort)
 
+    print("Alterando resolução para 10m")
     B06 <- resample(B06, B04, method='bilinear')
     B11 <- resample(B11, B04, method='bilinear')
 
+    print("Calculando os indices NDVI, SFDVI, NDII e EVI")
     #Indices
     {
       NDVI <- (B08-B04)/(B08+B04)
@@ -93,11 +96,17 @@ analises_sentinel <- function(kml,past, savall) {
     EVI <- mask(crop(EVI,extent(area_shape)),area_shape)
 
 
+    if(dir.exists(savall)==T){'Pasta já existe'}else{dir.create(savall)}
+
+    if(dir.exists(paste0(savall, '/Imgs_PNG'))==T){'Pasta já existe'}else{dir.create(paste0(savall, '/Imgs_PNG'))}
+
     cm_plot<-paste0(savall, '/Imgs_PNG/',nkml)
     cm_plot_SF <- paste0(savall, '/Imgs_PNG/', nkml,'/SFDVI')
 
     if(dir.exists(cm_plot)==T){'Pasta já existe'}else{dir.create(cm_plot)}
     if(dir.exists(cm_plot_SF)==T){'Pasta já existe'}else{dir.create(cm_plot_SF)}
+
+    print("Salvando PNG")
 
     png(paste0(cm_plot,'/NDVI_',dat,".png"),
         width=1500, height=1350, res=200)
@@ -112,6 +121,8 @@ analises_sentinel <- function(kml,past, savall) {
     dev.off()
 
     #plot(area_shape[5,],add=T)
+
+    print("Extraindo valores de cada poligono")
 
     for (s in 1:length(area_shape)) {
 
@@ -134,20 +145,22 @@ analises_sentinel <- function(kml,past, savall) {
       if(exists('santosT')==T){santosT<-rbind(santosT, vrt)}else{santosT<-vrt}
     }
 
-    cm_area<-paste0(savall,'/Indices_areas/',nkml)
+    print("Salvando arquivos GeoTiff")
 
-    if(dir.exists(cm_area)==T){'Pasta já existe'}else{dir.create(cm_area)}
+    if(dir.exists(paste0(savall, '/Indices_areas'))==T){'Pasta já existe'}else{dir.create(paste0(savall, '/Indices_areas'))}
 
-    writeRaster(NDVI, filename = (paste0(cm_area,'/','NDVI_',dat,'.tif')),
+    if(dir.exists(paste0(savall,'/Indices_areas/',nkml))==T){'Pasta já existe'}else{dir.create(paste0(savall,'/Indices_areas/',nkml))}
+
+    writeRaster(NDVI, filename = (paste0(savall,'/Indices_areas/',nkml,'/','NDVI_',dat,'.tif')),
                 format ="GTiff", epsg = 4326, overwrite=TRUE)
 
-    writeRaster(SFDVI, filename = (paste0(cm_area,'/','SFDVI_',dat,'.tif')),
+    writeRaster(SFDVI, filename = (paste0(savall,'/Indices_areas/',nkml,'/','SFDVI_',dat,'.tif')),
                 format ="GTiff", epsg = 4326, overwrite=TRUE)
 
-    writeRaster(NDII, filename = (paste0(cm_area,'/','NDII_',dat,'.tif')),
+    writeRaster(NDII, filename = (paste0(savall,'/Indices_areas/',nkml,'/','NDII_',dat,'.tif')),
                 format ="GTiff", epsg = 4326, overwrite=TRUE)
 
-    writeRaster(EVI, filename = (paste0(cm_area,'/','EVI_',dat,'.tif')),
+    writeRaster(EVI, filename = (paste0(savall,'/Indices_areas/',nkml,'/','EVI_',dat,'.tif')),
                 format ="GTiff", epsg = 4326, overwrite=TRUE)
 
 
@@ -156,7 +169,10 @@ analises_sentinel <- function(kml,past, savall) {
        cm_plot,cm_plot_SF)
   }
 
-  write.xlsx(santosT,paste0(savall, '/Indices_areas/',
+    print("Salvando excel dos valores extraídos")
+
+
+    write.xlsx(santosT,paste0(savall, '/Indices_areas/',
                             'dados_',nkml,'.xlsx'))
   rm(santosT,area_shape,cm_area,i,nkml)
 }}
