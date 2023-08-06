@@ -31,15 +31,19 @@ analises_sentinel <- function(kml, past, savall) {
 
     print(nkml)
 
-    area_shape <- rgdal::readOGR(kmls[j])
 
+    area_shape <- rgdal::readOGR(kmls[j])
+    print('Read kml')
     area_shape <- sp::spTransform(area_shape, proj4string(raster(img1[1])))
+    print('CRS reprojection done')
 
 
   #i=1
     for (i in 1:length(pasts)) {
     dat<-stringr::str_sub(pasts[i],start=-10)
     print(paste0(i,' / ',dat))
+
+    print('Opening raster files')
 
     B02<-raster(dir(pasts[i], pattern = '_B02.jp2',full.names = T, recursive =T, include.dirs = T))
     B03<-raster(dir(pasts[i], pattern = '_B03.jp2',full.names = T, recursive =T, include.dirs = T))
@@ -57,6 +61,7 @@ analises_sentinel <- function(kml, past, savall) {
         rm(B02,B03,B04,B08,B06,B11,cort,dat)
         next}
 
+    print('Cutting rasters with kml')
     B02 <- mask(crop(B02,extent(cort)),cort)
     B03 <- mask(crop(B03,extent(cort)),cort)
     B04 <- mask(crop(B04,extent(cort)),cort)
@@ -64,11 +69,11 @@ analises_sentinel <- function(kml, past, savall) {
     B06 <- mask(crop(B06,extent(cort)),cort)
     B11 <- mask(crop(B11,extent(cort)),cort)
 
-    print("Alterando resolução para 10m")
+    print("Changing resolution B06 and B11 to 10m")
     B06 <- resample(B06, B04, method='bilinear')
     B11 <- resample(B11, B04, method='bilinear')
 
-    print("Calculando os indices NDVI, SFDVI, NDII e EVI")
+    print("Calculating the NDVI, SFDVI, NDII and EVI indices")
     #Indices
     {
       NDVI <- (B08-B04)/(B08+B04)
@@ -85,10 +90,12 @@ analises_sentinel <- function(kml, past, savall) {
 
     }
 
-    NDVI <- disaggregate(NDVI, fact = c(6,6), method='bilinear')
-    SFDVI <- disaggregate(SFDVI, fact = c(6,6), method='bilinear')
-    NDII <- disaggregate(NDII, fact = c(6,6), method='bilinear')
-    EVI <- disaggregate(EVI, fact = c(6,6), method='bilinear')
+    print('Improving the resolution of images, longer step')
+
+    NDVI <- disaggregate(NDVI, fact = c(5,5), method='bilinear')
+    SFDVI <- disaggregate(SFDVI, fact = c(5,5), method='bilinear')
+    NDII <- disaggregate(NDII, fact = c(5,5), method='bilinear')
+    EVI <- disaggregate(EVI, fact = c(5,5), method='bilinear')
 
     NDVI <- mask(crop(NDVI,extent(area_shape)),area_shape)
     SFDVI <- mask(crop(SFDVI,extent(area_shape)),area_shape)
@@ -96,17 +103,18 @@ analises_sentinel <- function(kml, past, savall) {
     EVI <- mask(crop(EVI,extent(area_shape)),area_shape)
 
 
-    if(dir.exists(savall)==T){'Pasta já existe'}else{dir.create(savall)}
+    print('Creating the folder to save the image')
+    if(dir.exists(savall)==T){print('Folder already exists')}else{dir.create(savall)}
 
-    if(dir.exists(paste0(savall, '/Imgs_PNG'))==T){'Pasta já existe'}else{dir.create(paste0(savall, '/Imgs_PNG'))}
+    if(dir.exists(paste0(savall, '/Imgs_PNG'))==T){print('Folder already exists')}else{dir.create(paste0(savall, '/Imgs_PNG'))}
 
     cm_plot<-paste0(savall, '/Imgs_PNG/',nkml)
     cm_plot_SF <- paste0(savall, '/Imgs_PNG/', nkml,'/SFDVI')
 
-    if(dir.exists(cm_plot)==T){'Pasta já existe'}else{dir.create(cm_plot)}
-    if(dir.exists(cm_plot_SF)==T){'Pasta já existe'}else{dir.create(cm_plot_SF)}
+    if(dir.exists(cm_plot)==T){print('Folder already exists')}else{dir.create(cm_plot)}
+    if(dir.exists(cm_plot_SF)==T){print('Folder already exists')}else{dir.create(cm_plot_SF)}
 
-    print("Salvando PNG")
+    print("Saving PNG image")
 
     png(paste0(cm_plot,'/NDVI_',dat,".png"),
         width=1500, height=1350, res=200)
@@ -122,7 +130,7 @@ analises_sentinel <- function(kml, past, savall) {
 
     #plot(area_shape[5,],add=T)
 
-    print("Extraindo valores de cada poligono")
+    print("Extracting values from each polygon")
 
     for (s in 1:length(area_shape)) {
 
@@ -145,11 +153,11 @@ analises_sentinel <- function(kml, past, savall) {
       if(exists('santosT')==T){santosT<-rbind(santosT, vrt)}else{santosT<-vrt}
     }
 
-    print("Salvando arquivos GeoTiff")
+    print("Saving GeoTIFF files")
 
-    if(dir.exists(paste0(savall, '/Indices_areas'))==T){'Pasta já existe'}else{dir.create(paste0(savall, '/Indices_areas'))}
+    if(dir.exists(paste0(savall, '/Indices_areas'))==T){print('Folder already exists')}else{dir.create(paste0(savall, '/Indices_areas'))}
 
-    if(dir.exists(paste0(savall,'/Indices_areas/',nkml))==T){'Pasta já existe'}else{dir.create(paste0(savall,'/Indices_areas/',nkml))}
+    if(dir.exists(paste0(savall,'/Indices_areas/',nkml))==T){print('Folder already exists')}else{dir.create(paste0(savall,'/Indices_areas/',nkml))}
 
     writeRaster(NDVI, filename = (paste0(savall,'/Indices_areas/',nkml,'/','NDVI_',dat,'.tif')),
                 format ="GTiff", epsg = 4326, overwrite=TRUE)
@@ -169,7 +177,7 @@ analises_sentinel <- function(kml, past, savall) {
        cm_plot,cm_plot_SF)
   }
 
-    print("Salvando excel dos valores extraídos")
+    print("Saving excel of medians extracted from each polygon")
 
 
     write.xlsx(santosT,paste0(savall, '/Indices_areas/',
