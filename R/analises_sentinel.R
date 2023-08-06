@@ -75,20 +75,14 @@ analises_sentinel <- function(kml, past, savall) {
 
     print("Calculating the NDVI, SFDVI, NDII and EVI indices")
     #Indices
-    {
       NDVI <- (B08-B04)/(B08+B04)
-      plot(NDVI, main='NDVI')
 
       SFDVI <- ((B08+B03)/2)/((B04+B06)/2)
-      plot(SFDVI, main='SFDVI')
 
       NDII <- (B08-B11)/(B08+B11)
-      plot(NDII, main='NDII')
 
       EVI <- (2.5*(B08-B04))/(B08+6*B04+7.5*B02+1)
-      plot(EVI, main='EVI')
 
-    }
 
     print('Improving the resolution of images, longer step')
 

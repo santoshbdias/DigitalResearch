@@ -1,7 +1,7 @@
 Package: DigitalResearch
 Type: Package
 Title: Tools for research work with Digital Agriculture
-Version: 0.0.1
+Version: 0.0.9
 Author: c(person(given = "Santos H.",
                     family = "B Dias",
                     role = c("aut","cre"),
