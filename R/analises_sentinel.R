@@ -56,7 +56,7 @@ analises_sentinel <- function(kml, past, savall) {
     cort <- raster::buffer(area_shape, width = 200)
 
     if(!is.null(intersect(extent(cort),B02))){
-      print('kml dentro da imagem')}else{
+      print('kml inside the raster image')}else{
         print('Próximo')
         rm(B02,B03,B04,B08,B06,B11,cort,dat)
         next}
@@ -76,13 +76,9 @@ analises_sentinel <- function(kml, past, savall) {
     print("Calculating the NDVI, SFDVI, NDII and EVI indices")
     #Indices
       NDVI <- (B08-B04)/(B08+B04)
-
       SFDVI <- ((B08+B03)/2)/((B04+B06)/2)
-
       NDII <- (B08-B11)/(B08+B11)
-
       EVI <- (2.5*(B08-B04))/(B08+6*B04+7.5*B02+1)
-
 
     print('Improving the resolution of images, longer step')
 
@@ -103,10 +99,8 @@ analises_sentinel <- function(kml, past, savall) {
     if(dir.exists(paste0(savall, '/Imgs_PNG'))==T){print('Folder already exists')}else{dir.create(paste0(savall, '/Imgs_PNG'))}
 
     cm_plot<-paste0(savall, '/Imgs_PNG/',nkml)
-    cm_plot_SF <- paste0(savall, '/Imgs_PNG/', nkml,'/SFDVI')
 
     if(dir.exists(cm_plot)==T){print('Folder already exists')}else{dir.create(cm_plot)}
-    if(dir.exists(cm_plot_SF)==T){print('Folder already exists')}else{dir.create(cm_plot_SF)}
 
     print("Saving PNG image")
 
@@ -115,14 +109,6 @@ analises_sentinel <- function(kml, past, savall) {
     plot(NDVI, main=paste0('NDVI',' | ',dat,' | ',nkml))
     plot(area_shape, add=T)
     dev.off()
-
-    png(paste0(cm_plot_SF,'/SFDVI_',dat,".png"),
-        width=2400, height=1800, res=300)
-    plot(SFDVI, main=paste0('SFDVI',' | ',dat,' | ',nkml))
-    plot(area_shape, add=T)
-    dev.off()
-
-    #plot(area_shape[5,],add=T)
 
     print("Extracting values from each polygon")
 
