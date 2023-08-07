@@ -1,13 +1,16 @@
-#'Função gera informações a partir de imagens sentinel já corrigidas (Download feito pelo plugin SCP - Semi-Automatic Classification plugin). Gera os seguintes indices de vegetação: NDVI, SFDVI, NDII e EVI. Gera também arquivo xlsx da mediana destes indices.
-#'
 #'Está função serve para analisar imagens do satélite sentinel
+#'
+#'@description Função gera informações a partir de imagens sentinel já corrigidas (Download feito pelo plugin SCP - Semi-Automatic Classification plugin). Gera os seguintes indices de vegetação: NDVI, SFDVI, NDII e EVI. Gera também arquivo xlsx da mediana destes indices.
+#'
 #'
 #'@param kml link dos arquivos kml
 #'@param past link dos arquivos sentinel corrigidos
 #'@param savall link da pasta para salvar todos os resultados
 #'
+#'@importFrom terra crds crop mask writeRaster rast
+#'
 #'@example
-#'analises_sentinel(kml, past, savall)
+#'#analises_sentinel(kml, past, savall)
 #'
 #'@export
 #'@return Returns a images indices and data excel
@@ -15,8 +18,12 @@
 
 analises_sentinel <- function(kml, past, savall) {
 
-  if(!require("pacman")) install.packages("pacman");pacman::p_load(
-  raster, rgdal, stringr, xlsx, sp, terra)
+  library(raster)
+  library(rgdal)
+  library(stringr)
+  library(xlsx)
+  library(sp)
+  library(terra)
 
   kmls <-  kml
 
@@ -27,7 +34,7 @@ analises_sentinel <- function(kml, past, savall) {
 
   #j=1
   for (j in 1:length(kmls)) {
-    nkml <- str_sub(unlist(strsplit(kmls[j],'/'))[length(unlist(strsplit(kmls[j],'/')))], 1,-5)
+    nkml <- stringr::str_sub(unlist(strsplit(kmls[j],'/'))[length(unlist(strsplit(kmls[j],'/')))], 1,-5)
 
     print(nkml)
 
@@ -45,17 +52,17 @@ analises_sentinel <- function(kml, past, savall) {
 
     print('Opening raster files')
 
-    B02<-raster(dir(pasts[i], pattern = '_B02.jp2',full.names = T, recursive =T, include.dirs = T))
-    B03<-raster(dir(pasts[i], pattern = '_B03.jp2',full.names = T, recursive =T, include.dirs = T))
-    B04<-raster(dir(pasts[i], pattern = '_B04.jp2',full.names = T, recursive =T, include.dirs = T))
-    B08<-raster(dir(pasts[i], pattern = '_B08.jp2',full.names = T, recursive =T, include.dirs = T))
-    B06<-raster(dir(pasts[i], pattern = '_B06.jp2',full.names = T, recursive =T, include.dirs = T))
-    B11<-raster(dir(pasts[i], pattern = '_B11.jp2',full.names = T, recursive =T, include.dirs = T))
+    B02 <- raster::raster(dir(pasts[i], pattern = '_B02.jp2',full.names = T, recursive =T, include.dirs = T))
+    B03 <- raster::raster(dir(pasts[i], pattern = '_B03.jp2',full.names = T, recursive =T, include.dirs = T))
+    B04 <- raster::raster(dir(pasts[i], pattern = '_B04.jp2',full.names = T, recursive =T, include.dirs = T))
+    B08 <- raster::raster(dir(pasts[i], pattern = '_B08.jp2',full.names = T, recursive =T, include.dirs = T))
+    B06 <- raster::raster(dir(pasts[i], pattern = '_B06.jp2',full.names = T, recursive =T, include.dirs = T))
+    B11 <- raster::raster(dir(pasts[i], pattern = '_B11.jp2',full.names = T, recursive =T, include.dirs = T))
 
 
     cort <- raster::buffer(area_shape, width = 200)
 
-    if(!is.null(intersect(extent(cort),B02))){
+    if(!is.null(raster::intersect(raster::extent(cort),B02))){
       print('kml inside the raster image')}else{
         print('Próximo')
         rm(B02,B03,B04,B08,B06,B11,cort,dat)
@@ -82,10 +89,10 @@ analises_sentinel <- function(kml, past, savall) {
 
     print('Improving the resolution of images, longer step')
 
-    NDVI <- disaggregate(NDVI, fact = c(5,5), method='bilinear')
-    SFDVI <- disaggregate(SFDVI, fact = c(5,5), method='bilinear')
-    NDII <- disaggregate(NDII, fact = c(5,5), method='bilinear')
-    EVI <- disaggregate(EVI, fact = c(5,5), method='bilinear')
+    NDVI <- raster::disaggregate(NDVI, fact = c(5,5), method='bilinear')
+    SFDVI <- raster::disaggregate(SFDVI, fact = c(5,5), method='bilinear')
+    NDII <- raster::disaggregate(NDII, fact = c(5,5), method='bilinear')
+    EVI <- raster::disaggregate(EVI, fact = c(5,5), method='bilinear')
 
     NDVI <- mask(crop(NDVI,extent(area_shape)),area_shape)
     SFDVI <- mask(crop(SFDVI,extent(area_shape)),area_shape)

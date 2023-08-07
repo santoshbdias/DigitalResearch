@@ -2,7 +2,7 @@
 % Please edit documentation in R/analises_sentinel.R
 \name{analises_sentinel}
 \alias{analises_sentinel}
-\title{Função gera informações a partir de imagens sentinel já corrigidas (Download feito pelo plugin SCP - Semi-Automatic Classification plugin). Gera os seguintes indices de vegetação: NDVI, SFDVI, NDII e EVI. Gera também arquivo xlsx da mediana destes indices.}
+\title{Está função serve para analisar imagens do satélite sentinel}
 \usage{
 analises_sentinel(kml, past, savall)
 }
@@ -17,7 +17,7 @@ analises_sentinel(kml, past, savall)
 Returns a images indices and data excel
 }
 \description{
-Está função serve para analisar imagens do satélite sentinel
+Função gera informações a partir de imagens sentinel já corrigidas (Download feito pelo plugin SCP - Semi-Automatic Classification plugin). Gera os seguintes indices de vegetação: NDVI, SFDVI, NDII e EVI. Gera também arquivo xlsx da mediana destes indices.
 }
 \author{
 Santos Henrique Brant Dias

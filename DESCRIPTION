@@ -1,7 +1,7 @@
 Package: DigitalResearch
 Type: Package
 Title: Tools for research work with Digital Agriculture
-Version: 0.0.9
+Version: 0.1.2
 Author: c(person(given = "Santos H.",
                     family = "B Dias",
                     role = c("aut","cre"),
@@ -17,5 +17,5 @@ Description: Package prepared by Santos Henrique Brant Dias, together with the p
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Imports: httr, jsonlite, pacman, dplyr
+Imports: httr, jsonlite, pacman, dplyr, raster, rgdal, stringr, xlsx, sp, terra
 RoxygenNote: 7.2.3
