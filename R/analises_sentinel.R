@@ -111,11 +111,11 @@ analises_sentinel <- function(kml, past, savall) {
 
     print("Saving PNG image")
 
-    base::png(paste0(cm_plot,'/NDVI_',dat,".png"),
+    png(paste0(cm_plot,'/NDVI_',dat,".png"),
         width=1500, height=1350, res=200)
     base::plot(NDVI, main=paste0('NDVI',' | ',dat,' | ',nkml))
     base::plot(area_shape, add=T)
-    base::dev.off()
+    dev.off()
 
     print("Extracting values from each polygon")
 
